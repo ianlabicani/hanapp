@@ -9,6 +9,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Public routes are defined in routes/public.php
+require __DIR__.'/public.php';
+
 Route::get('/dashboard', function (Request $request) {
     $user = $request->user();
 
