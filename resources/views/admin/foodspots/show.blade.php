@@ -78,6 +78,14 @@
                             @endif
                         </dd>
                     </div>
+                    @if($foodspot->latitude && $foodspot->longitude)
+                        <div>
+                            <dt class="font-medium mb-2">Location</dt>
+                            <dd>
+                                <div id="foodspot-map" class="w-full h-48 rounded border"></div>
+                            </dd>
+                        </div>
+                    @endif
                 </dl>
 
                 @if($foodspot->description)
@@ -100,6 +108,24 @@
                     if (main && src) main.src = src;
                 });
             });
+
+            // Initialize map if coordinates exist
+            const mapEl = document.getElementById('foodspot-map');
+            if (mapEl && typeof L !== 'undefined') {
+                const lat = {{ $foodspot->latitude ?? 0 }};
+                const lng = {{ $foodspot->longitude ?? 0 }};
+
+                if (lat && lng) {
+                    const map = L.map(mapEl).setView([lat, lng], 15);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    L.marker([lat, lng]).addTo(map)
+                        .bindPopup('<strong>{{ addslashes($foodspot->name) }}</strong>')
+                        .openPopup();
+                }
+            }
         });
     </script>
 @endpush
