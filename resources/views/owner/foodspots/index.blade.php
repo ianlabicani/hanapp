@@ -37,11 +37,7 @@
                         <div class="mt-3 flex items-center justify-between">
                             <a href="{{ route('owner.foodspots.show', $spot) }}" class="text-blue-600 text-sm"><i class="fa-solid fa-eye mr-1"></i>View</a>
                             <a href="{{ route('owner.foodspots.edit', $spot) }}" class="text-yellow-600 text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
-                            <form action="{{ route('owner.foodspots.destroy', $spot) }}" method="POST" onsubmit="return confirm('Delete this foodspot?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 text-sm"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
-                            </form>
+                            <button type="button" class="text-red-600 text-sm delete-btn" data-action="{{ route('owner.foodspots.destroy', $spot) }}"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
                         </div>
                     </div>
                 </div>
@@ -51,6 +47,7 @@
         <div class="mt-4">
             {{ $foodspots->links() }}
         </div>
+        @include('owner.foodspots._delete-modal')
     @else
         <p class="text-gray-600">You have no foodspots yet.</p>
     @endif

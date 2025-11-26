@@ -5,11 +5,7 @@
             <h1 class="text-2xl font-bold"><i class="fa-solid fa-utensils mr-2"></i>{{ $foodspot->name }}</h1>
             <div class="flex items-center space-x-3">
                 <a href="{{ route('owner.foodspots.edit', $foodspot) }}" class="inline-flex items-center text-sm text-yellow-600 px-3 py-1 rounded hover:bg-yellow-50"><i class="fa-solid fa-pen-to-square mr-2"></i>Edit</a>
-                <form action="{{ route('owner.foodspots.destroy', $foodspot) }}" method="POST" onsubmit="return confirm('Delete this foodspot?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="inline-flex items-center text-sm text-red-600 px-3 py-1 rounded hover:bg-red-50"><i class="fa-solid fa-trash mr-2"></i>Delete</button>
-                </form>
+                <button type="button" class="inline-flex items-center text-sm text-red-600 px-3 py-1 rounded hover:bg-red-50 delete-btn" data-action="{{ route('owner.foodspots.destroy', $foodspot) }}"><i class="fa-solid fa-trash mr-2"></i>Delete</button>
                 <a href="{{ route('owner.foodspots.index') }}" class="inline-flex items-center text-sm text-gray-600 px-3 py-1 rounded hover:bg-gray-50"><i class="fa-solid fa-arrow-left mr-2"></i>Back</a>
             </div>
         </div>
@@ -107,4 +103,6 @@
         });
     </script>
 @endpush
+
+@include('owner.foodspots._delete-modal')
 @endsection
