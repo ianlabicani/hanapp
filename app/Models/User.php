@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->roles()->whereIn('name', $roles)->exists();
     }
+
+    public function foodspots()
+    {
+        return $this->hasMany(Foodspot::class);
+    }
 }
