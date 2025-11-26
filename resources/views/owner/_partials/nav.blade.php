@@ -5,7 +5,10 @@
 				<a href="{{ url('/') }}" class="text-lg font-semibold text-gray-800">HanApp</a>
 			</div>
 			<div>
-				<a href="{{ url('/owner/foodspots') }}" class="text-sm text-gray-700 hover:text-gray-900">Manage Foodspots</a>
+				<a href="{{ url('/owner/foodspots') }}" class="text-sm text-gray-700 hover:text-gray-900">
+					<i class="fa-solid fa-utensils mr-2"></i>
+					Manage Foodspots
+				</a>
 			</div>
 		</div>
 	</div>

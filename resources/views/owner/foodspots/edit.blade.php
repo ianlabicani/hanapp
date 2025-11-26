@@ -1,6 +1,6 @@
 @extends('owner.shell')
 @section('owner-content')
-    <h1 class="text-2xl font-bold mb-4">Edit Foodspot</h1>
+    <h1 class="text-2xl font-bold mb-4"><i class="fa-solid fa-pen-to-square mr-2"></i>Edit Foodspot</h1>
 
     @if($errors->any())
         <div class="mb-4 text-red-700">

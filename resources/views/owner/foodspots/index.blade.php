@@ -1,8 +1,8 @@
 @extends('owner.shell')
 @section('owner-content')
     <div class="flex items-center justify-between mb-4">
-        <h1 class="text-2xl font-bold">Manage Foodspots</h1>
-        <a href="{{ route('owner.foodspots.create') }}" class="inline-block bg-blue-600 text-white px-3 py-2 rounded">New Foodspot</a>
+        <h1 class="text-2xl font-bold"><i class="fa-solid fa-list mr-2"></i>Manage Foodspots</h1>
+        <a href="{{ route('owner.foodspots.create') }}" class="inline-block bg-blue-600 text-white px-3 py-2 rounded"><i class="fa-solid fa-plus mr-2"></i>New Foodspot</a>
     </div>
 
     @if(session('success'))
@@ -27,12 +27,12 @@
                             <td class="px-4 py-2">{{ $spot->category }}</td>
                             <td class="px-4 py-2">{{ $spot->visits ?? 0 }}</td>
                             <td class="px-4 py-2 text-right">
-                                <a href="{{ route('owner.foodspots.show', $spot) }}" class="text-sm text-blue-600 mr-2">View</a>
-                                <a href="{{ route('owner.foodspots.edit', $spot) }}" class="text-sm text-yellow-600 mr-2">Edit</a>
+                                <a href="{{ route('owner.foodspots.show', $spot) }}" class="text-sm text-blue-600 mr-2"><i class="fa-solid fa-eye mr-1"></i>View</a>
+                                <a href="{{ route('owner.foodspots.edit', $spot) }}" class="text-sm text-yellow-600 mr-2"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
                                 <form action="{{ route('owner.foodspots.destroy', $spot) }}" method="POST" class="inline" onsubmit="return confirm('Delete this foodspot?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-sm text-red-600">Delete</button>
+                                    <button type="submit" class="text-sm text-red-600"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
                                 </form>
                             </td>
                         </tr>

@@ -3,7 +3,10 @@
 <div class="grid grid-cols-1 gap-4">
     <div>
         <label class="block text-sm font-medium text-gray-700">Name</label>
-        <input type="text" name="name" value="{{ old('name', $foodspot->name ?? '') }}" class="mt-1 block w-full border-gray-300 rounded" required>
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-utensils"></i></span>
+            <input type="text" name="name" value="{{ old('name', $foodspot->name ?? '') }}" class="pl-10 block w-full border-gray-300 rounded" required>
+        </div>
     </div>
 
     <div>
@@ -13,7 +16,10 @@
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Category</label>
-        <input type="text" name="category" value="{{ old('category', $foodspot->category ?? '') }}" class="mt-1 block w-full border-gray-300 rounded">
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-tag"></i></span>
+            <input type="text" name="category" value="{{ old('category', $foodspot->category ?? '') }}" class="pl-10 block w-full border-gray-300 rounded">
+        </div>
     </div>
 
     <div>
@@ -47,7 +53,7 @@
     </div>
 
     <div class="flex items-center justify-end space-x-2">
-        <a href="{{ route('owner.foodspots.index') }}" class="text-sm text-gray-600">Cancel</a>
-        <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded">Save</button>
+        <a href="{{ route('owner.foodspots.index') }}" class="text-sm text-gray-600"><i class="fa-solid fa-arrow-left mr-1"></i>Cancel</a>
+        <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded"><i class="fa-solid fa-floppy-disk mr-1"></i>Save</button>
     </div>
 </div>
