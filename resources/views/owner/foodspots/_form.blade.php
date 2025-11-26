@@ -81,8 +81,9 @@
     <div class="sm:col-span-2">
         <label class="block text-sm font-medium text-gray-700">Images</label>
         <div class="mt-1">
-            <input type="file" name="images[]" multiple accept="image/*" class="block w-full">
+            <input id="images-input" type="file" name="images[]" multiple accept="image/*" class="block w-full">
             <p class="text-xs text-gray-500 mt-1">You can upload multiple images. Images are stored locally.</p>
+            <div id="image-previews" class="grid grid-cols-3 gap-2 mt-2"></div>
         </div>
     </div>
 
@@ -125,6 +126,30 @@
                 marker.setLatLng(e.latlng);
                 setInputs(e.latlng.lat, e.latlng.lng);
             });
+
+            // Image preview logic
+            const imagesInput = document.getElementById('images-input');
+            const previews = document.getElementById('image-previews');
+            if (imagesInput && previews) {
+                imagesInput.addEventListener('change', function (ev) {
+                    previews.innerHTML = '';
+                    const files = Array.from(ev.target.files || []);
+                    files.forEach((file) => {
+                        if (!file.type.startsWith('image/')) return;
+                        const reader = new FileReader();
+                        const wrap = document.createElement('div');
+                        wrap.className = 'relative';
+                        const img = document.createElement('img');
+                        img.className = 'w-full h-24 object-cover rounded';
+                        reader.onload = function (e) {
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        wrap.appendChild(img);
+                        previews.appendChild(wrap);
+                    });
+                });
+            }
         });
     </script>
 @endpush

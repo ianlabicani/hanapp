@@ -1,5 +1,5 @@
-<nav class="bg-white border-b">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="border-b mb-5">
+	<div class="container mx-auto">
 		<div class="flex items-center justify-between h-16">
 			<div class="flex items-center space-x-6">
 				<a href="{{ url('/') }}" class="text-lg font-semibold text-gray-800">HanApp</a>

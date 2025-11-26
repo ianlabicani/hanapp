@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Foodspot extends Model
 {
@@ -36,6 +37,25 @@ class Foodspot extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function (self $foodspot) {
+            // delete each image file from the public disk
+            $images = $foodspot->images ?? [];
+            foreach ($images as $path) {
+                if ($path && Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
+            // remove the foodspot directory if it exists
+            $dir = 'foodspots/'.$foodspot->id;
+            if (Storage::disk('public')->exists($dir) || Storage::disk('public')->directories(dirname($dir))) {
+                Storage::disk('public')->deleteDirectory($dir);
+            }
+        });
     }
 }
 

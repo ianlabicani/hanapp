@@ -164,7 +164,7 @@ class FoodspotController extends Controller
         $index = (int) $request->input('image_index');
         $images = $foodspot->images ?? [];
 
-        if (!isset($images[$index])) {
+        if (! isset($images[$index])) {
             return back()->with('error', 'Image not found.');
         }
 
