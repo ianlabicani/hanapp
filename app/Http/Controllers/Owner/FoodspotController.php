@@ -303,7 +303,7 @@ class FoodspotController extends Controller
             $filename = uniqid('', true).'.'.$ext;
             $path = rtrim($directory, '/').'/'.$filename;
 
-            
+
             Storage::disk('public')->put($path, $contents);
 
             return $path;
