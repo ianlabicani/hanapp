@@ -1,5 +1,8 @@
 @csrf
 
+{{-- hidden input to track selected thumbnail (index in the images array) --}}
+<input type="hidden" name="thumbnail_index" id="thumbnail_index" value="{{ old('thumbnail_index', isset($foodspot) && $foodspot->thumbnail ? array_search($foodspot->thumbnail, $foodspot->images ?? []) : '') }}">
+
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
         <label class="block text-sm font-medium text-gray-700">Name</label>
@@ -82,7 +85,23 @@
         <label class="block text-sm font-medium text-gray-700">Images</label>
         <div class="mt-1">
             <input id="images-input" type="file" name="images[]" multiple accept="image/*" class="block w-full">
-            <p class="text-xs text-gray-500 mt-1">You can upload multiple images. Images are stored locally.</p>
+            <p class="text-xs text-gray-500 mt-1">You can upload multiple images. Select one as the thumbnail.</p>
+
+            {{-- existing images (when editing) --}}
+            @if(isset($foodspot) && !empty($foodspot->images))
+                <div id="existing-images" class="grid grid-cols-3 gap-2 mt-2">
+                    @foreach($foodspot->images as $i => $img)
+                        <div class="relative border rounded overflow-hidden">
+                            <img src="{{ asset('storage/'.$img) }}" class="w-full h-32 object-cover">
+                            <label class="absolute top-1 left-1 bg-white bg-opacity-75 rounded px-1 text-xs">
+                                <input type="radio" name="thumbnail_radio_existing" value="{{ $i }}" class="thumbnail-radio" data-index="{{ $i }}" {{ isset($foodspot->thumbnail) && $foodspot->thumbnail === $img ? 'checked' : '' }}>
+                                Thumbnail
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             <div id="image-previews" class="grid grid-cols-3 gap-2 mt-2"></div>
         </div>
     </div>
@@ -127,27 +146,62 @@
                 setInputs(e.latlng.lat, e.latlng.lng);
             });
 
-            // Image preview logic
+            // Image preview & thumbnail selection logic
             const imagesInput = document.getElementById('images-input');
             const previews = document.getElementById('image-previews');
+            const thumbnailIndexInput = document.getElementById('thumbnail_index');
+            const existingCount = {{ isset($foodspot) ? count($foodspot->images ?? []) : 0 }};
+
+            function attachThumbnailHandlers() {
+                document.querySelectorAll('.thumbnail-radio').forEach(function (el) {
+                    el.addEventListener('change', function () {
+                        const idx = el.getAttribute('data-index');
+                        thumbnailIndexInput.value = idx;
+                    });
+                });
+            }
+
+            // apply handlers to any existing radios on page load
+            attachThumbnailHandlers();
+
             if (imagesInput && previews) {
                 imagesInput.addEventListener('change', function (ev) {
                     previews.innerHTML = '';
                     const files = Array.from(ev.target.files || []);
-                    files.forEach((file) => {
+                    files.forEach((file, i) => {
                         if (!file.type.startsWith('image/')) return;
                         const reader = new FileReader();
                         const wrap = document.createElement('div');
-                        wrap.className = 'relative';
+                        wrap.className = 'relative border rounded overflow-hidden';
+
                         const img = document.createElement('img');
-                        img.className = 'w-full h-24 object-cover rounded';
+                        img.className = 'w-full h-32 object-cover';
+
+                        const radioLabel = document.createElement('label');
+                        radioLabel.className = 'absolute top-1 left-1 bg-white bg-opacity-75 rounded px-1 text-xs';
+
+                        const radio = document.createElement('input');
+                        // new files will be appended after existing images on submit
+                        radio.type = 'radio';
+                        radio.name = 'thumbnail_radio_preview';
+                        radio.className = 'thumbnail-radio';
+                        radio.setAttribute('data-index', existingCount + i);
+                        radio.value = existingCount + i;
+                        radioLabel.appendChild(radio);
+                        radioLabel.appendChild(document.createTextNode(' Thumbnail'));
+
                         reader.onload = function (e) {
                             img.src = e.target.result;
                         };
                         reader.readAsDataURL(file);
+
                         wrap.appendChild(img);
+                        wrap.appendChild(radioLabel);
                         previews.appendChild(wrap);
                     });
+
+                    // re-attach handlers so clicking newly-created radios updates hidden input
+                    attachThumbnailHandlers();
                 });
             }
         });

@@ -65,6 +65,24 @@ class FoodspotController extends Controller
             $foodspot->save();
         }
 
+        // handle thumbnail selection (index relative to images array)
+        $thumbnailIndex = $request->input('thumbnail_index');
+        if ($thumbnailIndex !== null) {
+            $images = $foodspot->images ?? [];
+            $idx = (int) $thumbnailIndex;
+            if (isset($images[$idx])) {
+                $foodspot->thumbnail = $images[$idx];
+                $foodspot->save();
+            }
+        } else {
+            // default thumbnail to first image if available
+            $images = $foodspot->images ?? [];
+            if (!empty($images) && empty($foodspot->thumbnail)) {
+                $foodspot->thumbnail = $images[0];
+                $foodspot->save();
+            }
+        }
+
         return redirect()->route('owner.foodspots.index')->with('success', 'Foodspot created.');
     }
 
@@ -131,6 +149,24 @@ class FoodspotController extends Controller
             $foodspot->save();
         }
 
+        // handle thumbnail selection on update
+        $thumbnailIndex = $request->input('thumbnail_index');
+        if ($thumbnailIndex !== null) {
+            $images = $foodspot->images ?? [];
+            $idx = (int) $thumbnailIndex;
+            if (isset($images[$idx])) {
+                $foodspot->thumbnail = $images[$idx];
+                $foodspot->save();
+            }
+        } else {
+            // if no thumbnail provided and current thumbnail missing, set to first
+            $images = $foodspot->images ?? [];
+            if (!empty($images) && (empty($foodspot->thumbnail) || !in_array($foodspot->thumbnail, $images, true))) {
+                $foodspot->thumbnail = $images[0];
+                $foodspot->save();
+            }
+        }
+
         return redirect()->route('owner.foodspots.index')->with('success', 'Foodspot updated.');
     }
 
@@ -177,6 +213,10 @@ class FoodspotController extends Controller
         // remove from array and save
         array_splice($images, $index, 1);
         $foodspot->images = $images;
+        // adjust thumbnail if necessary
+        if (!empty($foodspot->thumbnail) && $foodspot->thumbnail === $path) {
+            $foodspot->thumbnail = count($images) ? $images[0] : null;
+        }
         $foodspot->save();
 
         return back()->with('success', 'Image removed.');

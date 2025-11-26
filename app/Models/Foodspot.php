@@ -18,6 +18,7 @@ class Foodspot extends Model
         'contact_number',
         'email',
         'images',
+        'thumbnail',
         'category_tag',
         'latitude',
         'longitude',
