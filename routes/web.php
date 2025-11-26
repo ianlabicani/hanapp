@@ -40,3 +40,4 @@ Route::delete('owner/foodspots/{foodspot}/images', [FoodspotController::class, '
 require __DIR__.'/auth.php';
 require __DIR__.'/owner.php';
 require __DIR__.'/public.php';
+require __DIR__.'/admin.php';
