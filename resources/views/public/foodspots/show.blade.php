@@ -50,18 +50,60 @@
                         <dt class="font-medium">Opening Hours</dt>
                         <dd>{{ $foodspot->open_time ?? '—' }} @if($foodspot->close_time) - {{ $foodspot->close_time }}@endif</dd>
                     </div>
-                    <div>
+                    <div class="mb-3">
                         <dt class="font-medium">Coordinates</dt>
                         <dd>
                             @if($foodspot->latitude && $foodspot->longitude)
-                                <a href="https://www.google.com/maps/search/?api=1&query={{ $foodspot->latitude }},{{ $foodspot->longitude }}" target="_blank" class="text-blue-600">View on map</a>
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ $foodspot->latitude }},{{ $foodspot->longitude }}" target="_blank" class="text-blue-600">View on Google Maps</a>
                             @else
                                 —
                             @endif
                         </dd>
                     </div>
+
+                    @if($foodspot->latitude && $foodspot->longitude)
+                        <div class="mb-3">
+                            <dt class="font-medium mb-2">Location</dt>
+                            <dd>
+                                <div id="foodspot-map" class="w-full h-48 rounded border"></div>
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt class="font-medium mb-2">Get Directions</dt>
+                            <dd>
+                                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $foodspot->latitude }},{{ $foodspot->longitude }}" target="_blank" class="flex items-center text-sm text-white bg-blue-600 px-3 py-2 rounded hover:bg-blue-700">
+                                    <i class="fa-solid fa-diamond-turn-right mr-2"></i>
+                                    Directions via Google Maps
+                                </a>
+                            </dd>
+                        </div>
+                    @endif
                 </dl>
             </aside>
         </div>
     </div>
+
+@if($foodspot->latitude && $foodspot->longitude)
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mapEl = document.getElementById('foodspot-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    const lat = {{ $foodspot->latitude }};
+    const lng = {{ $foodspot->longitude }};
+
+    const map = L.map(mapEl).setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup('<strong>{{ addslashes($foodspot->name) }}</strong>')
+        .openPopup();
+});
+</script>
+@endpush
+@endif
 @endsection
