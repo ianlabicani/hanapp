@@ -34,6 +34,20 @@
                             <div>{{ $spot->category }}</div>
                             <div><i class="fa-solid fa-eye mr-1"></i>{{ $spot->visits ?? 0 }}</div>
                         </div>
+                        <div class="mt-1 flex items-center text-sm text-gray-500">
+                            @php $avgRating = $spot->reviews_avg_rating ?? 0; @endphp
+                            <div class="flex items-center text-yellow-500">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= round($avgRating))
+                                        <i class="fa-solid fa-star text-xs"></i>
+                                    @else
+                                        <i class="fa-regular fa-star text-xs"></i>
+                                    @endif
+                                @endfor
+                            </div>
+                            <span class="ml-1">{{ number_format($avgRating, 1) }}</span>
+                            <span class="ml-2 text-gray-400">({{ $spot->reviews_count ?? 0 }} reviews)</span>
+                        </div>
                         <div class="mt-3 flex items-center justify-between">
                             <a href="{{ route('admin.foodspots.show', $spot) }}" class="text-blue-600 text-sm"><i class="fa-solid fa-eye mr-1"></i>View</a>
                             <a href="{{ route('admin.foodspots.edit', $spot) }}" class="text-yellow-600 text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>

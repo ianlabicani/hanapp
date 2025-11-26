@@ -14,7 +14,10 @@ class FoodspotController extends Controller
      */
     public function index()
     {
-        $foodspots = Foodspot::latest()->paginate(10);
+        $foodspots = Foodspot::withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(10);
 
         return view('admin.foodspots.index', compact('foodspots'));
     }
@@ -93,6 +96,8 @@ class FoodspotController extends Controller
     public function show(Foodspot $foodspot)
     {
         // admin can view any foodspot
+        $foodspot->load(['reviews.user']);
+
         return view('admin.foodspots.show', compact('foodspot'));
     }
 

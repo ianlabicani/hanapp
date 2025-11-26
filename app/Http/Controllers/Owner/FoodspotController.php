@@ -15,7 +15,11 @@ class FoodspotController extends Controller
      */
     public function index()
     {
-        $foodspots = Auth::user()->foodspots()->latest()->paginate(10);
+        $foodspots = Auth::user()->foodspots()
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(10);
 
         return view('owner.foodspots.index', compact('foodspots'));
     }
@@ -96,6 +100,7 @@ class FoodspotController extends Controller
             abort(403);
         }
 
+        $foodspot->load(['reviews.user']);
         return view('owner.foodspots.show', compact('foodspot'));
     }
 

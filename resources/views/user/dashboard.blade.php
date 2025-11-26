@@ -7,23 +7,66 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-blue-50 rounded shadow p-4">
-            <div class="flex items-center">
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow p-4 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-3xl font-bold">{{ $totalReviews }}</p>
+                    <p class="text-blue-100">Total Reviews</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                     <i class="fa-solid fa-comments fa-lg"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-2xl font-bold text-blue-600">{{ $totalReviews }}</p>
-                    <p class="text-sm text-gray-600">Total Reviews</p>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg shadow p-4 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-3xl font-bold">{{ $averageRatingGiven ? number_format($averageRatingGiven, 1) : '—' }}</p>
+                    <p class="text-yellow-100">Avg. Rating Given</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-star fa-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow p-4 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-3xl font-bold">{{ count($reviewsByCategory) }}</p>
+                    <p class="text-green-100">Categories Explored</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-tags fa-lg"></i>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Charts Row --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {{-- Rating Distribution --}}
+        <div class="bg-white rounded-lg shadow p-4">
+            <h2 class="text-lg font-semibold mb-4"><i class="fa-solid fa-star mr-2 text-yellow-500"></i>My Rating Distribution</h2>
+            <div class="h-64">
+                <canvas id="ratingChart"></canvas>
+            </div>
+        </div>
+
+        {{-- Reviews by Category --}}
+        <div class="bg-white rounded-lg shadow p-4">
+            <h2 class="text-lg font-semibold mb-4"><i class="fa-solid fa-tags mr-2 text-green-500"></i>Reviews by Category</h2>
+            <div class="h-64">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     {{-- Recent Reviews --}}
-    <div class="bg-white rounded shadow">
+    <div class="bg-white rounded-lg shadow">
         <div class="p-4 border-b flex items-center justify-between">
-            <h2 class="text-lg font-semibold"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Recent Reviews</h2>
+            <h2 class="text-lg font-semibold"><i class="fa-solid fa-clock-rotate-left mr-2 text-purple-500"></i>My Recent Reviews</h2>
             <a href="{{ route('user.reviews.index') }}" class="text-blue-600 text-sm hover:underline">View all</a>
         </div>
 
@@ -76,4 +119,68 @@
             </div>
         @endif
     </div>
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Rating Distribution
+            new Chart(document.getElementById('ratingChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+                    datasets: [{
+                        label: 'My Reviews',
+                        data: @json(array_values($ratingData)),
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(249, 115, 22, 0.8)',
+                            'rgba(234, 179, 8, 0.8)',
+                            'rgba(132, 204, 22, 0.8)',
+                            'rgba(34, 197, 94, 0.8)'
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            // Reviews by Category
+            const categoryData = @json($reviewsByCategory);
+            const hasCategories = Object.keys(categoryData).length > 0;
+
+            if (hasCategories) {
+                new Chart(document.getElementById('categoryChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categoryData),
+                        datasets: [{
+                            data: Object.values(categoryData),
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(16, 185, 129, 0.8)',
+                                'rgba(245, 158, 11, 0.8)',
+                                'rgba(239, 68, 68, 0.8)',
+                                'rgba(139, 92, 246, 0.8)',
+                                'rgba(236, 72, 153, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            } else {
+                document.getElementById('categoryChart').parentElement.innerHTML = '<div class="h-64 flex items-center justify-center text-gray-400"><p>No category data yet</p></div>';
+            }
+        });
+    </script>
+@endpush
 @endsection

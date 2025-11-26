@@ -96,6 +96,55 @@
                 @endif
             </aside>
         </div>
+
+        {{-- Reviews Section --}}
+        <div class="bg-white rounded shadow p-4">
+            <h2 class="text-lg font-semibold mb-4"><i class="fa-solid fa-comments mr-2"></i>Reviews</h2>
+
+            @if($foodspot->reviews->count())
+                <div class="mb-4 flex items-center space-x-3">
+                    <div class="flex items-center text-yellow-500 text-lg">
+                        @php $avgRating = $foodspot->averageRating(); @endphp
+                        @for ($i = 1; $i <= 5; $i++)
+                            @if ($i <= round($avgRating))
+                                <i class="fa-solid fa-star"></i>
+                            @else
+                                <i class="fa-regular fa-star"></i>
+                            @endif
+                        @endfor
+                    </div>
+                    <span class="text-lg font-semibold">{{ number_format($avgRating, 1) }}</span>
+                    <span class="text-gray-500">({{ $foodspot->reviews->count() }} reviews)</span>
+                </div>
+
+                <div class="space-y-4">
+                    @foreach($foodspot->reviews as $review)
+                        <div class="border-b pb-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-medium text-gray-800">{{ $review->user->name }}</span>
+                                    <div class="flex items-center text-yellow-500 text-sm">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $review->rating)
+                                                <i class="fa-solid fa-star"></i>
+                                            @else
+                                                <i class="fa-regular fa-star"></i>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-400">{{ $review->created_at->diffForHumans() }}</span>
+                            </div>
+                            @if($review->comment)
+                                <p class="mt-2 text-gray-700">{{ $review->comment }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-gray-500">No reviews yet.</p>
+            @endif
+        </div>
     </div>
 
 @push('scripts')
