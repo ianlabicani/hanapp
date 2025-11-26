@@ -11,14 +11,27 @@ Route::get('/', function () {
 Route::get('/dashboard', function (Request $request) {
     $user = $request->user();
 
-    if ($user->hasRole('owner')) {
-        return redirect()->route('owner.dashboard');
-    } elseif ($user->hasRole('admin')) {
+    if ($user->hasRole('admin')) {
         return redirect()->route('admin.dashboard');
+    } elseif ($user->hasRole('owner')) {
+        return redirect()->route('owner.dashboard');
+    } elseif ($user->hasRole('pending_owner')) {
+        return redirect()->route('pending-owner');
     }
 
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/pending-owner', function (Request $request) {
+    $user = $request->user();
+
+    // If not pending_owner, redirect to dashboard
+    if (! $user->hasRole('pending_owner')) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('pending-owner');
+})->middleware(['auth', 'verified'])->name('pending-owner');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
