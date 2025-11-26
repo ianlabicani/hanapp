@@ -8,6 +8,11 @@
 					<i class="fa-solid fa-utensils mr-2"></i>
 					Manage Foodspots
 				</a>
+
+				<a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'text-sm font-semibold text-blue-600' : 'text-sm text-gray-700 hover:text-gray-900' }}">
+					<i class="fa-solid fa-users mr-2"></i>
+					Users
+				</a>
 			</div>
 
 				<div class="flex items-center space-x-4">
