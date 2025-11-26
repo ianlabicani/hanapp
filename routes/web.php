@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Owner\FoodspotController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,16 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-// Owner foodspot management
-Route::middleware('auth')->group(function () {
-    Route::resource('owner/foodspots', FoodspotController::class)->names('owner.foodspots');
-});
-
-// Image removal for owner foodspots
-Route::delete('owner/foodspots/{foodspot}/images', [FoodspotController::class, 'destroyImage'])
-    ->middleware('auth')
-    ->name('owner.foodspots.images.destroy');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/owner.php';
