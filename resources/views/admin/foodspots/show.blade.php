@@ -1,12 +1,12 @@
-@extends('owner.shell')
-@section('owner-content')
+@extends('admin.shell')
+@section('admin-content')
     <div class="space-y-4">
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold"><i class="fa-solid fa-utensils mr-2"></i>{{ $foodspot->name }}</h1>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('owner.foodspots.edit', $foodspot) }}" class="inline-flex items-center text-sm text-yellow-600 px-3 py-1 rounded hover:bg-yellow-50"><i class="fa-solid fa-pen-to-square mr-2"></i>Edit</a>
-                <button type="button" class="inline-flex items-center text-sm text-red-600 px-3 py-1 rounded hover:bg-red-50 delete-btn" data-action="{{ route('owner.foodspots.destroy', $foodspot) }}"><i class="fa-solid fa-trash mr-2"></i>Delete</button>
-                <a href="{{ route('owner.foodspots.index') }}" class="inline-flex items-center text-sm text-gray-600 px-3 py-1 rounded hover:bg-gray-50"><i class="fa-solid fa-arrow-left mr-2"></i>Back</a>
+                <a href="{{ route('admin.foodspots.edit', $foodspot) }}" class="inline-flex items-center text-sm text-yellow-600 px-3 py-1 rounded hover:bg-yellow-50"><i class="fa-solid fa-pen-to-square mr-2"></i>Edit</a>
+                <button type="button" class="inline-flex items-center text-sm text-red-600 px-3 py-1 rounded hover:bg-red-50 delete-btn" data-action="{{ route('admin.foodspots.destroy', $foodspot) }}"><i class="fa-solid fa-trash mr-2"></i>Delete</button>
+                <a href="{{ route('admin.foodspots.index') }}" class="inline-flex items-center text-sm text-gray-600 px-3 py-1 rounded hover:bg-gray-50"><i class="fa-solid fa-arrow-left mr-2"></i>Back</a>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-lg font-semibold">Details</h2>
-                        <p class="text-sm text-gray-500">Owner view</p>
+                        <p class="text-sm text-gray-500">Admin view</p>
                     </div>
                 </div>
 
@@ -104,5 +104,5 @@
     </script>
 @endpush
 
-@include('owner.foodspots._delete-modal')
+@include('admin.foodspots._delete-modal')
 @endsection

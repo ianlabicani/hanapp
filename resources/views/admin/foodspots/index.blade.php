@@ -1,8 +1,8 @@
-@extends('owner.shell')
-@section('owner-content')
+@extends('admin.shell')
+@section('admin-content')
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-2xl font-bold"><i class="fa-solid fa-list mr-2"></i>Manage Foodspots</h1>
-        <a href="{{ route('owner.foodspots.create') }}" class="inline-block bg-blue-600 text-white px-3 py-2 rounded"><i class="fa-solid fa-plus mr-2"></i>New Foodspot</a>
+        <a href="{{ route('admin.foodspots.create') }}" class="inline-block bg-blue-600 text-white px-3 py-2 rounded"><i class="fa-solid fa-plus mr-2"></i>New Foodspot</a>
     </div>
 
     @if(session('success'))
@@ -35,9 +35,9 @@
                             <div><i class="fa-solid fa-eye mr-1"></i>{{ $spot->visits ?? 0 }}</div>
                         </div>
                         <div class="mt-3 flex items-center justify-between">
-                            <a href="{{ route('owner.foodspots.show', $spot) }}" class="text-blue-600 text-sm"><i class="fa-solid fa-eye mr-1"></i>View</a>
-                            <a href="{{ route('owner.foodspots.edit', $spot) }}" class="text-yellow-600 text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
-                            <button type="button" class="text-red-600 text-sm delete-btn" data-action="{{ route('owner.foodspots.destroy', $spot) }}"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
+                            <a href="{{ route('admin.foodspots.show', $spot) }}" class="text-blue-600 text-sm"><i class="fa-solid fa-eye mr-1"></i>View</a>
+                            <a href="{{ route('admin.foodspots.edit', $spot) }}" class="text-yellow-600 text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
+                            <button type="button" class="text-red-600 text-sm delete-btn" data-action="{{ route('admin.foodspots.destroy', $spot) }}"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
         <div class="mt-4">
             {{ $foodspots->links() }}
         </div>
-        @include('owner.foodspots._delete-modal')
+        @include('admin.foodspots._delete-modal')
     @else
         <p class="text-gray-600">You have no foodspots yet.</p>
     @endif

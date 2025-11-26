@@ -50,8 +50,8 @@ class FoodspotController extends Controller
             'thumbnail_index' => 'nullable|integer|min:0',
         ]);
 
-        // allow admin to optionally set an owner via `user_id`; default to null
-        $data['user_id'] = $request->input('user_id') ?? null;
+        // allow admin to optionally set an owner via `user_id`; default to the authenticated admin
+        $data['user_id'] = $request->input('user_id') ?? $request->user()->id;
 
         $foodspot = Foodspot::create($data + ['images' => []]);
 
@@ -166,8 +166,13 @@ class FoodspotController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Foodspot $foodspot)
+    public function destroy(Request $request, Foodspot $foodspot)
     {
+        // record who is performing the deletion by assigning ownership to the admin
+        // (useful if the model uses soft deletes; harmless if not)
+        $foodspot->user_id = $request->user()->id;
+        $foodspot->save();
+
         // admin may delete any foodspot
         $foodspot->delete();
 

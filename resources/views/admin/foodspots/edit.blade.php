@@ -1,5 +1,5 @@
-@extends('owner.shell')
-@section('owner-content')
+@extends('admin.shell')
+@section('admin-content')
     <h1 class="text-2xl font-bold mb-4"><i class="fa-solid fa-pen-to-square mr-2"></i>Edit Foodspot</h1>
 
     @if($errors->any())
@@ -12,9 +12,9 @@
         </div>
     @endif
 
-    <form action="{{ route('owner.foodspots.update', $foodspot) }}" method="POST" enctype="multipart/form-data" class="space-y-4 bg-white p-4 rounded shadow">
+    <form action="{{ route('admin.foodspots.update', $foodspot) }}" method="POST" enctype="multipart/form-data" class="space-y-4 bg-white p-4 rounded shadow">
         @method('PATCH')
-        @include('owner.foodspots._form')
+        @include('admin.foodspots._form')
     </form>
 
     @if(!empty($foodspot->images))
@@ -24,7 +24,7 @@
                     @foreach($foodspot->images as $i => $img)
                         <div class="relative">
                             <img src="{{ asset('storage/' . $img) }}" alt="" class="w-full h-32 object-cover rounded">
-                            <form action="{{ route('owner.foodspots.images.destroy', $foodspot) }}" method="POST" class="absolute top-2 right-2">
+                            <form action="{{ route('admin.foodspots.images.destroy', $foodspot) }}" method="POST" class="absolute top-2 right-2">
                                 @csrf
                                 @method('DELETE')
                                 <input type="hidden" name="image_index" value="{{ $i }}">
