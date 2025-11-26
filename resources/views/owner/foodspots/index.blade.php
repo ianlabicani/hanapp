@@ -10,35 +10,42 @@
     @endif
 
     @if($foodspots->count())
-        <div class="overflow-x-auto bg-white shadow rounded">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Name</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Category</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Visits</th>
-                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-500">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($foodspots as $spot)
-                        <tr>
-                            <td class="px-4 py-2">{{ $spot->name }}</td>
-                            <td class="px-4 py-2">{{ $spot->category }}</td>
-                            <td class="px-4 py-2">{{ $spot->visits ?? 0 }}</td>
-                            <td class="px-4 py-2 text-right">
-                                <a href="{{ route('owner.foodspots.show', $spot) }}" class="text-sm text-blue-600 mr-2"><i class="fa-solid fa-eye mr-1"></i>View</a>
-                                <a href="{{ route('owner.foodspots.edit', $spot) }}" class="text-sm text-yellow-600 mr-2"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
-                                <form action="{{ route('owner.foodspots.destroy', $spot) }}" method="POST" class="inline" onsubmit="return confirm('Delete this foodspot?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-sm text-red-600"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach($foodspots as $spot)
+                <div class="bg-white rounded shadow overflow-hidden">
+                    <div class="h-44 bg-gray-100">
+                        @php
+                            $thumb = $spot->thumbnail ?? ($spot->images[0] ?? null);
+                        @endphp
+                        @if($thumb)
+                            <img src="{{ asset('storage/' . $thumb) }}" alt="{{ $spot->name }}" class="w-full h-44 object-cover">
+                        @else
+                            <div class="w-full h-44 flex items-center justify-center text-gray-400">
+                                <i class="fa-solid fa-image fa-2x"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-semibold text-lg">{{ $spot->name }}</h3>
+                        @if($spot->tagline)
+                            <p class="text-sm text-gray-600">{{ $spot->tagline }}</p>
+                        @endif
+                        <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
+                            <div>{{ $spot->category }}</div>
+                            <div><i class="fa-solid fa-eye mr-1"></i>{{ $spot->visits ?? 0 }}</div>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between">
+                            <a href="{{ route('owner.foodspots.show', $spot) }}" class="text-blue-600 text-sm"><i class="fa-solid fa-eye mr-1"></i>View</a>
+                            <a href="{{ route('owner.foodspots.edit', $spot) }}" class="text-yellow-600 text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
+                            <form action="{{ route('owner.foodspots.destroy', $spot) }}" method="POST" onsubmit="return confirm('Delete this foodspot?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 text-sm"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
 
         <div class="mt-4">

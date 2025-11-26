@@ -48,17 +48,18 @@ class FoodspotController extends Controller
             'category' => 'nullable|string|max:100',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'thumbnail_index' => 'nullable|integer|min:0',
         ]);
 
         $data['user_id'] = Auth::id();
 
         $foodspot = Foodspot::create($data + ['images' => []]);
 
-        // handle uploads
+        // handle uploads (resize & store)
         if ($request->hasFile('images')) {
             $stored = [];
             foreach ($request->file('images') as $file) {
-                $path = $file->store('foodspots/'.$foodspot->id, 'public');
+                $path = $this->resizeAndStore($file, 'foodspots/'.$foodspot->id);
                 $stored[] = $path;
             }
             $foodspot->images = $stored;
@@ -142,7 +143,7 @@ class FoodspotController extends Controller
         if ($request->hasFile('images')) {
             $existing = $foodspot->images ?? [];
             foreach ($request->file('images') as $file) {
-                $path = $file->store('foodspots/'.$foodspot->id, 'public');
+                $path = $this->resizeAndStore($file, 'foodspots/'.$foodspot->id);
                 $existing[] = $path;
             }
             $foodspot->images = $existing;
@@ -220,5 +221,95 @@ class FoodspotController extends Controller
         $foodspot->save();
 
         return back()->with('success', 'Image removed.');
+    }
+
+    /**
+     * Resize an uploaded image and store it on the public disk.
+     * Returns the storage path.
+     */
+    private function resizeAndStore($file, string $directory)
+    {
+        try {
+            $mime = $file->getMimeType();
+            $ext = $file->getClientOriginalExtension();
+
+            // create image resource from uploaded file
+            $src = null;
+            if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
+                $src = @imagecreatefromjpeg($file->getRealPath());
+                $ext = 'jpg';
+            } elseif ($mime === 'image/png') {
+                $src = @imagecreatefrompng($file->getRealPath());
+                $ext = 'png';
+            } elseif ($mime === 'image/gif') {
+                $src = @imagecreatefromgif($file->getRealPath());
+                $ext = 'gif';
+            } elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) {
+                $src = @imagecreatefromwebp($file->getRealPath());
+                $ext = 'webp';
+            }
+
+            // if we couldn't create a resource, fallback to storing original
+            if (! $src) {
+                return $file->store($directory, 'public');
+            }
+
+            $max = 1200; // max width / height
+            $width = imagesx($src);
+            $height = imagesy($src);
+
+            $ratio = $width / $height;
+            if ($width > $max || $height > $max) {
+                if ($ratio > 1) {
+                    $newW = $max;
+                    $newH = intval($max / $ratio);
+                } else {
+                    $newH = $max;
+                    $newW = intval($max * $ratio);
+                }
+            } else {
+                $newW = $width;
+                $newH = $height;
+            }
+
+            $dst = imagecreatetruecolor($newW, $newH);
+
+            // preserve transparency for PNG/GIF/WebP
+            if (in_array($ext, ['png','gif','webp'])) {
+                imagecolortransparent($dst, imagecolorallocatealpha($dst, 0, 0, 0, 127));
+                imagealphablending($dst, false);
+                imagesavealpha($dst, true);
+            }
+
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $width, $height);
+
+            ob_start();
+            $quality = 85;
+            if ($ext === 'png') {
+                imagepng($dst);
+            } elseif ($ext === 'gif') {
+                imagegif($dst);
+            } elseif ($ext === 'webp' && function_exists('imagewebp')) {
+                imagewebp($dst, null, $quality);
+            } else {
+                imagejpeg($dst, null, $quality);
+                $ext = 'jpg';
+            }
+            $contents = ob_get_clean();
+
+            imagedestroy($src);
+            imagedestroy($dst);
+
+            $filename = uniqid('', true).'.'.$ext;
+            $path = rtrim($directory, '/').'/'.$filename;
+
+            
+            Storage::disk('public')->put($path, $contents);
+
+            return $path;
+        } catch (\Throwable $e) {
+            // on any failure, fallback to default store
+            return $file->store($directory, 'public');
+        }
     }
 }

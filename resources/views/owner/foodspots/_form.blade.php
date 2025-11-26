@@ -84,12 +84,15 @@
     <div class="sm:col-span-2">
         <label class="block text-sm font-medium text-gray-700">Images</label>
         <div class="mt-1">
-            <input id="images-input" type="file" name="images[]" multiple accept="image/*" class="block w-full">
-            <p class="text-xs text-gray-500 mt-1">You can upload multiple images. Select one as the thumbnail.</p>
+            <div id="images-dropzone" class="border-2 border-dashed border-gray-300 rounded p-4 text-center cursor-pointer hover:border-gray-400">
+                <p class="text-sm text-gray-600"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Drag & drop images here, or <label for="images-input" class="text-blue-600 underline cursor-pointer">browse</label></p>
+                <p class="text-xs text-gray-500 mt-1">You can upload multiple images. Select one as the thumbnail.</p>
+                <input id="images-input" type="file" name="images[]" multiple accept="image/*" class="hidden">
+            </div>
 
             {{-- existing images (when editing) --}}
             @if(isset($foodspot) && !empty($foodspot->images))
-                <div id="existing-images" class="grid grid-cols-3 gap-2 mt-2">
+                <div id="existing-images" class="grid grid-cols-3 gap-2 mt-3">
                     @foreach($foodspot->images as $i => $img)
                         <div class="relative border rounded overflow-hidden">
                             <img src="{{ asset('storage/'.$img) }}" class="w-full h-32 object-cover">
@@ -102,7 +105,7 @@
                 </div>
             @endif
 
-            <div id="image-previews" class="grid grid-cols-3 gap-2 mt-2"></div>
+            <div id="image-previews" class="grid grid-cols-3 gap-2 mt-3"></div>
         </div>
     </div>
 
@@ -154,54 +157,104 @@
 
             function attachThumbnailHandlers() {
                 document.querySelectorAll('.thumbnail-radio').forEach(function (el) {
-                    el.addEventListener('change', function () {
-                        const idx = el.getAttribute('data-index');
+                    el.removeEventListener('change', el._thumbHandler || function () {});
+                    const handler = function () {
+                        const idx = parseInt(el.getAttribute('data-index'));
                         thumbnailIndexInput.value = idx;
-                    });
+                    };
+                    el.addEventListener('change', handler);
+                    el._thumbHandler = handler;
                 });
+            }
+
+            // DataTransfer to manage new files before submit
+            let dt = new DataTransfer();
+
+            function renderPreviewsFromDT() {
+                previews.innerHTML = '';
+                Array.from(dt.files).forEach(function (file, i) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'relative border rounded overflow-hidden';
+
+                    const img = document.createElement('img');
+                    img.className = 'w-full h-32 object-cover';
+
+                    const radioLabel = document.createElement('label');
+                    radioLabel.className = 'absolute top-1 left-1 bg-white bg-opacity-75 rounded px-1 text-xs';
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'thumbnail_radio_preview';
+                    radio.className = 'thumbnail-radio';
+                    radio.setAttribute('data-index', existingCount + i);
+                    radio.value = existingCount + i;
+                    radioLabel.appendChild(radio);
+                    radioLabel.appendChild(document.createTextNode(' Thumbnail'));
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded';
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.addEventListener('click', function () {
+                        removeNewImage(i);
+                    });
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+
+                    wrap.appendChild(img);
+                    wrap.appendChild(radioLabel);
+                    wrap.appendChild(removeBtn);
+                    previews.appendChild(wrap);
+                });
+
+                // sync input.files
+                imagesInput.files = dt.files;
+                attachThumbnailHandlers();
+            }
+
+            function removeNewImage(index) {
+                const newDt = new DataTransfer();
+                Array.from(dt.files).forEach(function (f, i) {
+                    if (i !== index) newDt.items.add(f);
+                });
+                dt = newDt;
+                renderPreviewsFromDT();
             }
 
             // apply handlers to any existing radios on page load
             attachThumbnailHandlers();
 
+            const dropzone = document.getElementById('images-dropzone');
+            if (dropzone) {
+                dropzone.addEventListener('click', function () {
+                    imagesInput.click();
+                });
+
+                dropzone.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    dropzone.classList.add('border-gray-500');
+                });
+                dropzone.addEventListener('dragleave', function () {
+                    dropzone.classList.remove('border-gray-500');
+                });
+                dropzone.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-gray-500');
+                    const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/'));
+                    files.forEach(function (f) { dt.items.add(f); });
+                    renderPreviewsFromDT();
+                });
+            }
+
             if (imagesInput && previews) {
                 imagesInput.addEventListener('change', function (ev) {
-                    previews.innerHTML = '';
                     const files = Array.from(ev.target.files || []);
-                    files.forEach((file, i) => {
-                        if (!file.type.startsWith('image/')) return;
-                        const reader = new FileReader();
-                        const wrap = document.createElement('div');
-                        wrap.className = 'relative border rounded overflow-hidden';
-
-                        const img = document.createElement('img');
-                        img.className = 'w-full h-32 object-cover';
-
-                        const radioLabel = document.createElement('label');
-                        radioLabel.className = 'absolute top-1 left-1 bg-white bg-opacity-75 rounded px-1 text-xs';
-
-                        const radio = document.createElement('input');
-                        // new files will be appended after existing images on submit
-                        radio.type = 'radio';
-                        radio.name = 'thumbnail_radio_preview';
-                        radio.className = 'thumbnail-radio';
-                        radio.setAttribute('data-index', existingCount + i);
-                        radio.value = existingCount + i;
-                        radioLabel.appendChild(radio);
-                        radioLabel.appendChild(document.createTextNode(' Thumbnail'));
-
-                        reader.onload = function (e) {
-                            img.src = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-
-                        wrap.appendChild(img);
-                        wrap.appendChild(radioLabel);
-                        previews.appendChild(wrap);
-                    });
-
-                    // re-attach handlers so clicking newly-created radios updates hidden input
-                    attachThumbnailHandlers();
+                    files.forEach(function (f) { dt.items.add(f); });
+                    renderPreviewsFromDT();
                 });
             }
         });
