@@ -17,6 +17,8 @@ Route::get('/dashboard', function (Request $request) {
         return redirect()->route('owner.dashboard');
     } elseif ($user->hasRole('pending_owner')) {
         return redirect()->route('pending-owner');
+    } elseif ($user->hasRole('user')) {
+        return redirect()->route('user.dashboard');
     }
 
     return view('dashboard');
@@ -43,3 +45,4 @@ require __DIR__.'/auth.php';
 require __DIR__.'/owner.php';
 require __DIR__.'/public.php';
 require __DIR__.'/admin.php';
+require __DIR__.'/user.php';

@@ -40,6 +40,20 @@ class Foodspot extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the average rating for this foodspot.
+     */
+    public function averageRating(): ?float
+    {
+        $avg = $this->reviews()->avg('rating');
+        return $avg ? round($avg, 1) : null;
+    }
+
     protected static function booted()
     {
         static::deleting(function (self $foodspot) {
