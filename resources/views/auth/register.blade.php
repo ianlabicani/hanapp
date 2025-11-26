@@ -54,6 +54,17 @@
                     <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                 </div>
 
+                <!-- Account Type -->
+                <div class="mt-4">
+                    <x-input-label for="account_type" :value="__('Account Type')" />
+                    <select id="account_type" name="account_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                        <option value="user" {{ old('account_type') === 'user' ? 'selected' : '' }}>User - Browse and discover foodspots</option>
+                        <option value="owner" {{ old('account_type') === 'owner' ? 'selected' : '' }}>Owner - Manage your own foodspots (requires approval)</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Owner accounts require admin approval before you can create foodspots.</p>
+                    <x-input-error :messages="$errors->get('account_type')" class="mt-2" />
+                </div>
+
                 <div class="flex items-center justify-end mt-4">
                     <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                         {{ __('Already registered?') }}

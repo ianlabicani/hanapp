@@ -17,5 +17,8 @@ Route::middleware(['auth', 'verified', 'hasRole:admin'])
             ->name('foodspots.images.destroy');
 
         Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/pending-owners', [UserController::class, 'pendingOwners'])->name('users.pending-owners');
+        Route::post('users/{user}/approve-owner', [UserController::class, 'approveOwner'])->name('users.approve-owner');
+        Route::post('users/{user}/reject-owner', [UserController::class, 'rejectOwner'])->name('users.reject-owner');
         Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
     });

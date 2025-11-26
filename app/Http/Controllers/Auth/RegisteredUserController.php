@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'account_type' => ['required', 'in:user,owner'],
         ]);
 
         $user = User::create([
@@ -42,8 +43,16 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $ownerRole = Role::firstOrCreate(['name' => 'owner']);
-        $user->roles()->syncWithoutDetaching([$ownerRole->id]);
+        // Assign role based on account type selection
+        if ($request->account_type === 'owner') {
+            // Owner requests get pending_owner role until admin approves
+            $pendingOwnerRole = Role::firstOrCreate(['name' => 'pending_owner']);
+            $user->roles()->syncWithoutDetaching([$pendingOwnerRole->id]);
+        } else {
+            // Regular users get user role immediately
+            $userRole = Role::firstOrCreate(['name' => 'user']);
+            $user->roles()->syncWithoutDetaching([$userRole->id]);
+        }
 
         event(new Registered($user));
 
