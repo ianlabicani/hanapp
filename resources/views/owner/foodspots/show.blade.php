@@ -15,6 +15,17 @@
             <p class="text-gray-700"><i class="fa-solid fa-location-dot mr-2"></i><strong>Address:</strong> {{ $foodspot->address }}</p>
             <p class="text-gray-700"><i class="fa-solid fa-phone mr-2"></i><strong>Contact:</strong> {{ $foodspot->contact_number }} - {{ $foodspot->email }}</p>
             <p class="text-gray-700 mt-4">{{ $foodspot->description }}</p>
+
+            @if(!empty($foodspot->images))
+                <div class="mt-4">
+                    <h3 class="font-semibold mb-2">Images</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        @foreach($foodspot->images as $img)
+                            <img src="{{ asset('storage/' . $img) }}" alt="" class="w-full h-32 object-cover rounded">
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 @endsection

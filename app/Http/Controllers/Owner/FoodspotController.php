@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Foodspot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class FoodspotController extends Controller
 {
@@ -45,11 +46,24 @@ class FoodspotController extends Controller
             'longitude' => 'nullable|numeric',
             'tagline' => 'nullable|string|max:255',
             'category' => 'nullable|string|max:100',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,gif,webp|max:5120',
         ]);
 
         $data['user_id'] = Auth::id();
 
-        Foodspot::create($data);
+        $foodspot = Foodspot::create($data + ['images' => []]);
+
+        // handle uploads
+        if ($request->hasFile('images')) {
+            $stored = [];
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('foodspots/'.$foodspot->id, 'public');
+                $stored[] = $path;
+            }
+            $foodspot->images = $stored;
+            $foodspot->save();
+        }
 
         return redirect()->route('owner.foodspots.index')->with('success', 'Foodspot created.');
     }
@@ -100,9 +114,22 @@ class FoodspotController extends Controller
             'longitude' => 'nullable|numeric',
             'tagline' => 'nullable|string|max:255',
             'category' => 'nullable|string|max:100',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,gif,webp|max:5120',
         ]);
 
         $foodspot->update($data);
+
+        // handle new uploads (append)
+        if ($request->hasFile('images')) {
+            $existing = $foodspot->images ?? [];
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('foodspots/'.$foodspot->id, 'public');
+                $existing[] = $path;
+            }
+            $foodspot->images = $existing;
+            $foodspot->save();
+        }
 
         return redirect()->route('owner.foodspots.index')->with('success', 'Foodspot updated.');
     }
@@ -119,5 +146,39 @@ class FoodspotController extends Controller
         $foodspot->delete();
 
         return redirect()->route('owner.foodspots.index')->with('success', 'Foodspot deleted.');
+    }
+
+    /**
+     * Remove an image from a foodspot.
+     */
+    public function destroyImage(Request $request, Foodspot $foodspot)
+    {
+        if ($foodspot->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'image_index' => 'required|integer|min:0',
+        ]);
+
+        $index = (int) $request->input('image_index');
+        $images = $foodspot->images ?? [];
+
+        if (!isset($images[$index])) {
+            return back()->with('error', 'Image not found.');
+        }
+
+        $path = $images[$index];
+        // delete file from storage
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+
+        // remove from array and save
+        array_splice($images, $index, 1);
+        $foodspot->images = $images;
+        $foodspot->save();
+
+        return back()->with('success', 'Image removed.');
     }
 }

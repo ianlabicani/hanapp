@@ -78,6 +78,14 @@
         </div>
     </div>
 
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Images</label>
+        <div class="mt-1">
+            <input type="file" name="images[]" multiple accept="image/*" class="block w-full">
+            <p class="text-xs text-gray-500 mt-1">You can upload multiple images. Images are stored locally.</p>
+        </div>
+    </div>
+
     <div class="sm:col-span-2 flex items-center justify-end space-x-2">
         <a href="{{ route('owner.foodspots.index') }}" class="text-sm text-gray-600"><i class="fa-solid fa-arrow-left mr-1"></i>Cancel</a>
         <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded"><i class="fa-solid fa-floppy-disk mr-1"></i>Save</button>

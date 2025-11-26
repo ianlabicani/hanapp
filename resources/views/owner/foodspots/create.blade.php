@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <form action="{{ route('owner.foodspots.store') }}" method="POST" class="space-y-4 bg-white p-4 rounded shadow">
+    <form action="{{ route('owner.foodspots.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 bg-white p-4 rounded shadow">
         @include('owner.foodspots._form')
     </form>
 

@@ -32,5 +32,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('owner/foodspots', FoodspotController::class)->names('owner.foodspots');
 });
 
+// Image removal for owner foodspots
+Route::delete('owner/foodspots/{foodspot}/images', [FoodspotController::class, 'destroyImage'])
+    ->middleware('auth')
+    ->name('owner.foodspots.images.destroy');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/owner.php';

@@ -16,6 +16,7 @@ class Foodspot extends Model
         'visits',
         'contact_number',
         'email',
+        'images',
         'category_tag',
         'latitude',
         'longitude',
@@ -29,6 +30,7 @@ class Foodspot extends Model
         'longitude' => 'decimal:7',
         'open_time' => 'string',
         'close_time' => 'string',
+        'images' => 'array',
     ];
 
     public function user()
