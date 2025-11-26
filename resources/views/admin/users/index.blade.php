@@ -18,6 +18,7 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roles</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registered</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -39,6 +40,9 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('M d, Y') }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-eye mr-1"></i>View</a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

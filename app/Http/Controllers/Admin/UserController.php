@@ -16,4 +16,14 @@ class UserController extends Controller
 
         return view('admin.users.index', compact('users'));
     }
+
+    /**
+     * Display the specified user.
+     */
+    public function show(User $user)
+    {
+        $user->load('roles', 'foodspots');
+
+        return view('admin.users.show', compact('user'));
+    }
 }
