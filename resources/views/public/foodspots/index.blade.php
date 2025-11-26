@@ -1,9 +1,9 @@
-@extends('shell')
-@section('content')
+@extends('public.shell')
+@section('public-content')
     <div class="max-w-7xl mx-auto py-8 px-4">
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold">Foodspots</h1>
-            <form method="GET" action="{{ route('foodspots.index') }}" class="flex items-center space-x-2">
+            <form method="GET" action="{{ route('public.foodspots.index') }}" class="flex items-center space-x-2">
                 <input type="search" name="q" value="{{ request('q') }}" placeholder="Search" class="border rounded px-3 py-1">
                 <button class="bg-blue-600 text-white px-3 py-1 rounded">Search</button>
             </form>
@@ -13,7 +13,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach($foodspots as $spot)
                     <article class="bg-white rounded shadow overflow-hidden">
-                        <a href="{{ route('foodspots.show', $spot) }}" class="block">
+                        <a href="{{ route('public.foodspots.show', $spot) }}" class="block">
                             @php $thumb = $spot->thumbnail ?? ($spot->images[0] ?? null); @endphp
                             @if($thumb)
                                 <img src="{{ asset('storage/' . $thumb) }}" alt="{{ $spot->name }}" class="w-full h-44 object-cover">
@@ -24,7 +24,7 @@
                             @endif
                         </a>
                         <div class="p-4">
-                            <h3 class="font-semibold text-lg"><a href="{{ route('foodspots.show', $spot) }}">{{ $spot->name }}</a></h3>
+                            <h3 class="font-semibold text-lg"><a href="{{ route('public.foodspots.show', $spot) }}">{{ $spot->name }}</a></h3>
                             @if($spot->tagline)
                                 <p class="text-sm text-gray-600 mt-1">{{ $spot->tagline }}</p>
                             @endif

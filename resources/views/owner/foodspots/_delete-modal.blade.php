@@ -1,4 +1,4 @@
-<div id="delete-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+<div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
     <div class="absolute inset-0 bg-black bg-opacity-50 z-40"></div>
     <div class="bg-white rounded shadow-lg z-50 w-11/12 max-w-lg p-6">
         <h3 class="text-lg font-semibold">Confirm Delete</h3>

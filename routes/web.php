@@ -6,11 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
-});
-
-// Public routes are defined in routes/public.php
-require __DIR__.'/public.php';
+    return view('public.welcome');
+})->name('welcome');
 
 Route::get('/dashboard', function (Request $request) {
     $user = $request->user();
@@ -42,3 +39,4 @@ Route::delete('owner/foodspots/{foodspot}/images', [FoodspotController::class, '
 
 require __DIR__.'/auth.php';
 require __DIR__.'/owner.php';
+require __DIR__.'/public.php';

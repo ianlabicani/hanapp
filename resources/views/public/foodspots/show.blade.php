@@ -1,10 +1,6 @@
-@extends('shell')
-@section('content')
+@extends('public.shell')
+@section('public-content')
     <div class="max-w-6xl mx-auto px-4 py-8">
-        <div class="mb-6">
-            <a href="{{ route('foodspots.index') }}" class="text-sm text-gray-600 hover:underline">&larr; Back to listings</a>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 bg-white rounded shadow p-4">
                 @php $main = $foodspot->thumbnail ?? ($foodspot->images[0] ?? null); @endphp
