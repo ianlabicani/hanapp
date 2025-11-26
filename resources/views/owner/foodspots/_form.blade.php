@@ -1,6 +1,6 @@
 @csrf
 
-<div class="grid grid-cols-1 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
         <label class="block text-sm font-medium text-gray-700">Name</label>
         <div class="mt-1 relative">
@@ -11,7 +11,10 @@
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Address</label>
-        <input type="text" name="address" value="{{ old('address', $foodspot->address ?? '') }}" class="mt-1 block w-full border-gray-300 rounded">
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-location-dot"></i></span>
+            <input type="text" name="address" value="{{ old('address', $foodspot->address ?? '') }}" class="pl-10 block w-full border-gray-300 rounded">
+        </div>
     </div>
 
     <div>
@@ -24,40 +27,58 @@
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Tagline</label>
-        <input type="text" name="tagline" value="{{ old('tagline', $foodspot->tagline ?? '') }}" class="mt-1 block w-full border-gray-300 rounded">
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-quote-right"></i></span>
+            <input type="text" name="tagline" value="{{ old('tagline', $foodspot->tagline ?? '') }}" class="pl-10 block w-full border-gray-300 rounded">
+        </div>
     </div>
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Contact Number</label>
-        <input type="text" name="contact_number" value="{{ old('contact_number', $foodspot->contact_number ?? '') }}" class="mt-1 block w-full border-gray-300 rounded">
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-phone"></i></span>
+            <input type="text" name="contact_number" value="{{ old('contact_number', $foodspot->contact_number ?? '') }}" class="pl-10 block w-full border-gray-300 rounded">
+        </div>
     </div>
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" name="email" value="{{ old('email', $foodspot->email ?? '') }}" class="mt-1 block w-full border-gray-300 rounded">
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-envelope"></i></span>
+            <input type="email" name="email" value="{{ old('email', $foodspot->email ?? '') }}" class="pl-10 block w-full border-gray-300 rounded">
+        </div>
     </div>
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Latitude</label>
-        <input type="text" name="latitude" value="{{ old('latitude', $foodspot->latitude ?? '') }}" class="mt-1 block w-full border-gray-300 rounded bg-gray-50" readonly>
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-location-crosshairs"></i></span>
+            <input type="text" name="latitude" value="{{ old('latitude', $foodspot->latitude ?? '') }}" class="pl-10 block w-full border-gray-300 rounded bg-gray-50" readonly>
+        </div>
     </div>
 
     <div>
         <label class="block text-sm font-medium text-gray-700">Longitude</label>
-        <input type="text" name="longitude" value="{{ old('longitude', $foodspot->longitude ?? '') }}" class="mt-1 block w-full border-gray-300 rounded bg-gray-50" readonly>
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-2 text-gray-400"><i class="fa-solid fa-location-crosshairs"></i></span>
+            <input type="text" name="longitude" value="{{ old('longitude', $foodspot->longitude ?? '') }}" class="pl-10 block w-full border-gray-300 rounded bg-gray-50" readonly>
+        </div>
     </div>
 
-    <div>
+    <div class="sm:col-span-2">
         <label class="block text-sm font-medium text-gray-700">Location (click or drag pin)</label>
         <div id="foodspot-map" class="mt-1 w-full border-gray-300 rounded" style="height:320px;"></div>
     </div>
 
-    <div>
+    <div class="sm:col-span-2">
         <label class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea name="description" class="mt-1 block w-full border-gray-300 rounded">{{ old('description', $foodspot->description ?? '') }}</textarea>
+        <div class="mt-1 relative">
+            <span class="absolute left-3 top-3 text-gray-400"><i class="fa-solid fa-file-lines"></i></span>
+            <textarea name="description" class="pl-10 mt-1 block w-full border-gray-300 rounded">{{ old('description', $foodspot->description ?? '') }}</textarea>
+        </div>
     </div>
 
-    <div class="flex items-center justify-end space-x-2">
+    <div class="sm:col-span-2 flex items-center justify-end space-x-2">
         <a href="{{ route('owner.foodspots.index') }}" class="text-sm text-gray-600"><i class="fa-solid fa-arrow-left mr-1"></i>Cancel</a>
         <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded"><i class="fa-solid fa-floppy-disk mr-1"></i>Save</button>
     </div>

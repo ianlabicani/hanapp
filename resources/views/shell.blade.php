@@ -28,5 +28,7 @@
         @yield('content')
         <!-- Leaflet JS -->
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        @stack('scripts')
     </body>
 </html>
