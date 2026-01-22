@@ -35,6 +35,63 @@ class Foodspot extends Model
         'images' => 'array',
     ];
 
+    /**
+     * Normalize images attribute to a flat array of string paths.
+     */
+    public function getImagesAttribute($value)
+    {
+        $images = $value;
+
+        if (is_string($images)) {
+            $decoded = json_decode($images, true);
+            if (is_array($decoded)) {
+                $images = $decoded;
+            }
+        }
+
+        if (!is_array($images)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($images as $img) {
+            if (is_array($img)) {
+                $path = $img['path'] ?? $img['file'] ?? $img['filename'] ?? $img['url'] ?? null;
+                if (is_string($path) && trim($path) !== '') {
+                    $out[] = $path;
+                }
+            } elseif (is_string($img)) {
+                // ignore JSON-array-like strings
+                if (preg_match('/^\s*\[.*\]\s*$/', $img)) {
+                    continue;
+                }
+                if (trim($img) !== '') {
+                    $out[] = $img;
+                }
+            }
+        }
+
+        return array_values(array_filter($out));
+    }
+
+    /**
+     * Normalize thumbnail attribute to a single string path or null.
+     */
+    public function getThumbnailAttribute($value)
+    {
+        $thumb = $value;
+
+        if (is_array($thumb)) {
+            $thumb = $thumb['path'] ?? $thumb['file'] ?? $thumb['filename'] ?? $thumb['url'] ?? null;
+        }
+
+        if (is_string($thumb) && preg_match('/^\s*\[.*\]\s*$/', $thumb)) {
+            return null;
+        }
+
+        return is_string($thumb) && trim($thumb) !== '' ? $thumb : null;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

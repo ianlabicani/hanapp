@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $topFoodspotsByRating = $user->foodspots()
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
-            ->having('reviews_count', '>', 0)
+            ->has('reviews')
             ->orderByDesc('reviews_avg_rating')
             ->take(5)
             ->get();

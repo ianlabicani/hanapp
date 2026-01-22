@@ -134,6 +134,18 @@ class FoodspotController extends Controller
             'images.*' => 'image|mimes:jpg,jpeg,png,gif,webp|max:5120',
         ]);
 
+        // If files were uploaded, remove 'images' from the validated data so
+        // we don't persist UploadedFile instances directly into the model.
+        if ($request->hasFile('images')) {
+            unset($data['images']);
+        }
+
+        // prevent unintentionally overwriting existing images when an empty
+        // images array was submitted from the form (no new files)
+        if (array_key_exists('images', $data) && empty($data['images'])) {
+            unset($data['images']);
+        }
+
         $foodspot->update($data);
 
         // handle new uploads (append)

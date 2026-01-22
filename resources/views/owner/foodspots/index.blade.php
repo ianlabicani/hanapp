@@ -11,11 +11,23 @@
 
     @if($foodspots->count())
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            @foreach($foodspots as $spot)
+                    @foreach($foodspots as $spot)
                 <div class="bg-white rounded shadow overflow-hidden">
                     <div class="h-44 bg-gray-100">
                         @php
-                            $thumb = $spot->thumbnail ?? ($spot->images[0] ?? null);
+                            // normalize thumbnail and images which may be strings or arrays
+                            $thumb = null;
+                            if (isset($spot->thumbnail)) {
+                                $thumb = is_array($spot->thumbnail) ? ($spot->thumbnail['path'] ?? $spot->thumbnail['file'] ?? $spot->thumbnail['filename'] ?? $spot->thumbnail['url'] ?? null) : $spot->thumbnail;
+                                // if thumbnail is a JSON-encoded array or empty array string, ignore it
+                                if (is_string($thumb) && preg_match('/^\s*\[.*\]\s*$/', $thumb)) {
+                                    $thumb = null;
+                                }
+                            }
+                            if (empty($thumb) && !empty($spot->images)) {
+                                $first = $spot->images[0];
+                                $thumb = is_array($first) ? ($first['path'] ?? $first['file'] ?? $first['filename'] ?? $first['url'] ?? null) : $first;
+                            }
                         @endphp
                         @if($thumb)
                             <img src="{{ asset('storage/' . $thumb) }}" alt="{{ $spot->name }}" class="w-full h-44 object-cover">

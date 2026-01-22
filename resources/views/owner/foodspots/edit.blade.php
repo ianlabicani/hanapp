@@ -22,15 +22,30 @@
             <h2 class="font-semibold mb-2">Images</h2>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     @foreach($foodspot->images as $i => $img)
-                        <div class="relative">
-                            <img src="{{ asset('storage/' . $img) }}" alt="" class="w-full h-32 object-cover rounded">
-                            <form action="{{ route('owner.foodspots.images.destroy', $foodspot) }}" method="POST" class="absolute top-2 right-2">
-                                @csrf
-                                @method('DELETE')
-                                <input type="hidden" name="image_index" value="{{ $i }}">
-                                <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded text-xs" onclick="return confirm('Remove this image?')">Remove</button>
-                            </form>
-                        </div>
+                        @php
+                            $imgPath = null;
+                            if (is_array($img)) {
+                                $imgPath = $img['path'] ?? $img['file'] ?? $img['filename'] ?? $img['url'] ?? null;
+                            } else {
+                                $imgPath = $img;
+                            }
+                            // if stored thumbnail-like values are JSON empty arrays, normalize
+                            if (is_string($imgPath) && preg_match('/^\s*\[.*\]\s*$/', $imgPath)) {
+                                $imgPath = null;
+                            }
+                        @endphp
+
+                        @if($imgPath)
+                            <div class="relative">
+                                <img src="{{ asset('storage/' . $imgPath) }}" alt="" class="w-full h-32 object-cover rounded">
+                                <form action="{{ route('owner.foodspots.images.destroy', $foodspot) }}" method="POST" class="absolute top-2 right-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="image_index" value="{{ $i }}">
+                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded text-xs" onclick="return confirm('Remove this image?')">Remove</button>
+                                </form>
+                            </div>
+                        @endif
                     @endforeach
             </div>
         </div>

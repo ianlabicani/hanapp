@@ -1,4 +1,4 @@
-<div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
+<div id="delete-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-black bg-opacity-50 z-40"></div>
     <div class="bg-white rounded shadow-lg z-50 w-11/12 max-w-lg p-6">
         <h3 class="text-lg font-semibold">Confirm Delete</h3>
@@ -17,7 +17,7 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        (function () {
             const modal = document.getElementById('delete-modal');
             const form = document.getElementById('delete-modal-form');
             const cancel = document.getElementById('delete-modal-cancel');
@@ -25,7 +25,6 @@
             function openDeleteModal(action) {
                 form.action = action;
                 modal.classList.remove('hidden');
-                // focus the cancel button for immediate keyboard availability
                 cancel.focus();
             }
 
@@ -51,6 +50,6 @@
             modal.addEventListener('click', function (e) {
                 if (e.target === modal) closeDeleteModal();
             });
-        });
+        })();
     </script>
 @endpush
