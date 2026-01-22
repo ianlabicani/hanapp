@@ -24,7 +24,7 @@ class DashboardController extends Controller
         // Top foodspots by rating
         $topFoodspotsByRating = Foodspot::withAvg('reviews', 'rating')
             ->withCount('reviews')
-            ->having('reviews_count', '>', 0)
+            ->has('reviews')
             ->orderByDesc('reviews_avg_rating')
             ->take(5)
             ->get();
