@@ -18,7 +18,15 @@
                 @if(!empty($foodspot->images))
                     <div class="mt-4 grid grid-cols-4 gap-3">
                         @foreach($foodspot->images as $img)
-                            <img src="{{ asset('storage/' . $img) }}" class="w-full h-24 object-cover rounded">
+                            @php
+                                $imgPath = is_array($img) ? ($img['path'] ?? $img['file'] ?? $img['filename'] ?? $img['url'] ?? null) : $img;
+                                if (is_string($imgPath) && preg_match('/^\s*\[.*\]\s*$/', $imgPath)) {
+                                    $imgPath = null;
+                                }
+                            @endphp
+                            @if($imgPath)
+                                <img src="{{ asset('storage/' . $imgPath) }}" class="w-full h-24 object-cover rounded">
+                            @endif
                         @endforeach
                     </div>
                 @endif

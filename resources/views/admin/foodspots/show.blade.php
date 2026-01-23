@@ -31,9 +31,17 @@
                 @if(!empty($foodspot->images))
                     <div class="mt-4 grid grid-cols-4 gap-3">
                         @foreach($foodspot->images as $img)
-                            <button type="button" class="thumb-btn border rounded overflow-hidden focus:outline-none" data-src="{{ asset('storage/' . $img) }}">
-                                <img src="{{ asset('storage/' . $img) }}" alt="" class="w-full h-24 object-cover">
-                            </button>
+                            @php
+                                $imgPath = is_array($img) ? ($img['path'] ?? $img['file'] ?? $img['filename'] ?? $img['url'] ?? null) : $img;
+                                if (is_string($imgPath) && preg_match('/^\s*\[.*\]\s*$/', $imgPath)) {
+                                    $imgPath = null;
+                                }
+                            @endphp
+                            @if($imgPath)
+                                <button type="button" class="thumb-btn border rounded overflow-hidden focus:outline-none" data-src="{{ asset('storage/' . $imgPath) }}">
+                                    <img src="{{ asset('storage/' . $imgPath) }}" alt="" class="w-full h-24 object-cover">
+                                </button>
+                            @endif
                         @endforeach
                     </div>
                 @endif

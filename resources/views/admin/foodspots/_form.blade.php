@@ -94,13 +94,31 @@
             @if(isset($foodspot) && !empty($foodspot->images))
                 <div id="existing-images" class="grid grid-cols-3 gap-2 mt-3">
                     @foreach($foodspot->images as $i => $img)
-                        <div class="relative border rounded overflow-hidden">
-                            <img src="{{ asset('storage/'.$img) }}" class="w-full h-32 object-cover">
-                            <label class="absolute top-1 left-1 bg-white bg-opacity-75 rounded px-1 text-xs">
-                                <input type="radio" name="thumbnail_radio_existing" value="{{ $i }}" class="thumbnail-radio" data-index="{{ $i }}" {{ isset($foodspot->thumbnail) && $foodspot->thumbnail === $img ? 'checked' : '' }}>
-                                Thumbnail
-                            </label>
-                        </div>
+                        @php
+                            $imgPath = null;
+                            if (is_array($img)) {
+                                $imgPath = $img['path'] ?? $img['file'] ?? $img['filename'] ?? $img['url'] ?? null;
+                            } else {
+                                $imgPath = $img;
+                            }
+                            $currentThumb = null;
+                            if (isset($foodspot->thumbnail)) {
+                                $currentThumb = is_array($foodspot->thumbnail) ? ($foodspot->thumbnail['path'] ?? $foodspot->thumbnail['file'] ?? $foodspot->thumbnail['filename'] ?? null) : $foodspot->thumbnail;
+                                if (is_string($currentThumb) && preg_match('/^\s*\[.*\]\s*$/', $currentThumb)) {
+                                    $currentThumb = null;
+                                }
+                            }
+                        @endphp
+
+                        @if($imgPath)
+                            <div class="relative border rounded overflow-hidden">
+                                <img src="{{ asset('storage/'.$imgPath) }}" class="w-full h-32 object-cover">
+                                <label class="absolute top-1 left-1 bg-white bg-opacity-75 rounded px-1 text-xs">
+                                    <input type="radio" name="thumbnail_radio_existing" value="{{ $i }}" class="thumbnail-radio" data-index="{{ $i }}" {{ isset($currentThumb) && $currentThumb === $imgPath ? 'checked' : '' }}>
+                                    Thumbnail
+                                </label>
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             @endif
